@@ -16,3 +16,8 @@ leetcode_collection = db["leetcode"]
 youtube_collection = db["youtube"]
 codeforces_collection = db["codeforces"]
 gfg_collection = db["gfg"]
+
+# Create indexes for optimization
+users_collection.create_index("email", unique=True)
+notes_collection.create_index("problem_id")
+youtube_collection.create_index("video_id")
