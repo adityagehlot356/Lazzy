@@ -12,7 +12,13 @@ document.addEventListener('mouseup', () => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "extract_page_content") {
         const pageText = document.body.innerText;
-        sendResponse({ content: pageText });
+        // Attempt to extract LeetCode title if we are on LeetCode
+        let leetcodeTitle = "";
+        const titleElement = document.querySelector('div[data-cy="question-title"]');
+        if (titleElement) {
+            leetcodeTitle = titleElement.innerText;
+        }
+        sendResponse({ content: pageText, leetcodeTitle: leetcodeTitle });
     }
 });
 
