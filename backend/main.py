@@ -40,3 +40,24 @@ def login(user: models.UserLogin):
     
     # Return a fake token for now
     return {"access_token": "fake-jwt-token-123", "token_type": "bearer"}
+
+@app.post("/notes/universal")
+def save_universal_note(note: models.UniversalNote):
+    note_dict = note.dict()
+    # In reality, associate this with the logged-in user
+    database.notes_collection.insert_one(note_dict)
+    return {"message": "Universal note saved successfully", "platform": note.platform}
+
+@app.post("/notes/youtube")
+def save_youtube_note(note: models.YoutubeNote):
+    note_dict = note.dict()
+    database.youtube_collection.insert_one(note_dict)
+    return {"message": "YouTube note saved successfully", "video_id": note.video_id}
+
+@app.get("/notes")
+def get_all_notes():
+    # Helper to serialize mongo ObjectIds if needed, for now just convert to strings
+    notes = list(database.notes_collection.find({}, {"_id": 0}))
+    return {"notes": notes}
+
+
