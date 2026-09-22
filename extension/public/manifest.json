@@ -12,7 +12,8 @@
         "downloads"
     ],
     "host_permissions": [
-        "https://lazzy-backend.onrender.com/*"
+        "https://lazzy-backend.onrender.com/*",
+        "http://localhost:8000/*"
     ],
     "action": {
         "default_title": "Lazzy Notes",
