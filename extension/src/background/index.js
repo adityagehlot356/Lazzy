@@ -7,7 +7,19 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "summarize") {
     console.log("Summarize action triggered in background");
-    sendResponse({ status: "success", data: "Summary placeholder" });
+    // Connect to backend API
+    fetch("http://localhost:8000/notes/universal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        problem_id: "example-id",
+        platform: "General",
+        note_content: "Automated summary placeholder"
+      })
+    })
+    .then(res => res.json())
+    .then(data => sendResponse({ status: "success", data: data }))
+    .catch(err => sendResponse({ status: "error", error: err.toString() }));
   }
   return true; // Keep the message channel open for async response
 });
