@@ -60,4 +60,26 @@ def get_all_notes():
     notes = list(database.notes_collection.find({}, {"_id": 0}))
     return {"notes": notes}
 
+class AIRequest(models.BaseModel):
+    text: str
+
+@app.post("/ai/summarize")
+def summarize_text(req: AIRequest):
+    # Mock AI summarization
+    summary = f"Summary of the provided text ({len(req.text)} chars): This is a mock AI summary."
+    return {"summary": summary}
+
+@app.post("/ai/explain")
+def explain_text(req: AIRequest):
+    # Mock AI explanation
+    explanation = f"Explanation: The selected text discusses various concepts. (Mock response)"
+    return {"explanation": explanation}
+
+@app.post("/ai/chat")
+def chat_with_ai(req: AIRequest):
+    # Mock AI chat response
+    response = f"AI says: I received your message '{req.text}'. How else can I help?"
+    return {"response": response}
+
+
 
