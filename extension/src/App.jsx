@@ -3,6 +3,29 @@ import { MessageSquare, FileText, Settings } from 'lucide-react'
 
 function App() {
   const [activeTab, setActiveTab] = useState('chat')
+  const [chatInput, setChatInput] = useState('')
+  const [messages, setMessages] = useState([
+    { role: 'assistant', content: 'Hello! How can I help you today?' }
+  ])
+
+  const handleSendMessage = async () => {
+    if (!chatInput.trim()) return;
+    const newMsg = { role: 'user', content: chatInput };
+    setMessages(prev => [...prev, newMsg]);
+    setChatInput('');
+
+    try {
+      const res = await fetch("http://localhost:8000/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newMsg.content })
+      });
+      const data = await res.json();
+      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "Error connecting to AI." }]);
+    }
+  }
 
   return (
     <div className="w-96 h-[600px] flex flex-col bg-gray-50 text-gray-900 font-sans">
@@ -14,18 +37,23 @@ function App() {
       <main className="flex-1 overflow-y-auto p-4">
         {activeTab === 'chat' && (
           <div className="flex flex-col h-full">
-            <div className="flex-1 overflow-y-auto space-y-4">
-              <div className="bg-blue-100 text-blue-900 p-3 rounded-lg rounded-tl-none self-start max-w-[80%]">
-                Hello! How can I help you today?
-              </div>
+            <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`p-3 rounded-lg max-w-[80%] ${msg.role === 'user' ? 'bg-blue-600 text-white self-end rounded-tr-none ml-auto' : 'bg-blue-100 text-blue-900 self-start rounded-tl-none'}`}>
+                  {msg.content}
+                </div>
+              ))}
             </div>
             <div className="mt-4 flex gap-2">
               <input 
                 type="text" 
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Ask something..." 
                 className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+              <button onClick={handleSendMessage} className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                 Send
               </button>
             </div>
