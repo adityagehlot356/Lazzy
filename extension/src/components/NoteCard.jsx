@@ -21,3 +21,4 @@ const NoteCard = ({ title, platform, content }) => {
 };
 
 export default NoteCard;
+
